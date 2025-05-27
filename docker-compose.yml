@@ -19,7 +19,7 @@ services:
       retries: 5
       start_period: 10s
 
-  java-app:
+  repotrack-app:
     platform: linux/arm64
     build: ./repotrack
     env_file: .env
@@ -30,6 +30,9 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    volumes:
+      - repotrack_repos:/app/repositories
 
 volumes:
   repotrack_db:
+  repotrack_repos:
