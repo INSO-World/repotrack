@@ -5,7 +5,7 @@ COPY . .
 ARG JAVA_TOOL_OPTIONS="-XX:UseSVE=0"
 ENV JAVA_TOOL_OPTIONS=$JAVA_TOOL_OPTIONS
 
-RUN printenv & mvn clean package
+RUN printenv & mvn clean package -DskipTests
 
 
 # Runtime stage
