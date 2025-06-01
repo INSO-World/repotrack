@@ -4,7 +4,7 @@ FROM postgres:16-alpine
 RUN mkdir -p /docker-entrypoint-initdb.d
 
 # Copy schema SQL file to initialization directory
-COPY schema.sql /docker-entrypoint-initdb.d/
+# COPY schema.sql /docker-entrypoint-initdb.d/
 
 # Expose PostgreSQL port
 EXPOSE 5432
