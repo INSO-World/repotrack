@@ -1,10 +1,11 @@
 package at.ac.tuwien.student.e11800752.repositorytracker.scheduled;
 
+import at.ac.tuwien.student.e11800752.repositorytracker.exception.ServiceException;
+import at.ac.tuwien.student.e11800752.repositorytracker.service.GitRepositoryProcessor;
 import at.ac.tuwien.student.e11800752.repositorytracker.service.GitService;
 import com.google.common.hash.Hashing;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
@@ -31,6 +32,7 @@ public class GitRepositoryObserver implements SchedulingConfigurer {
     private String[] repositoryUrls;
 
     private final GitService gitService;
+    private final GitRepositoryProcessor gitRepositoryProccessor;
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
@@ -41,7 +43,6 @@ public class GitRepositoryObserver implements SchedulingConfigurer {
     }
 
     public void syncRepositories(List<String> remoteRepositoryURIs) {
-        log.info("Synching all repositories");
         for (String remoteRepositoryURI : remoteRepositoryURIs) {
             String pathToLocalRepository = Hashing.sha256().hashString(remoteRepositoryURI, StandardCharsets.UTF_8).toString();
             handleRepository(remoteRepositoryURI, pathToLocalRepository);
@@ -51,19 +52,24 @@ public class GitRepositoryObserver implements SchedulingConfigurer {
     public void handleRepository(String remoteRepositoryURI, String pathToLocalRepository) {
         File localRepository = new File(pathToLocalRepository);
         if (localRepository.exists()) {
-            // pullRepository()
+            pullRepository(localRepository);
         } else {
             cloneRepository(remoteRepositoryURI, localRepository);
         }
-        // processRepository()
+        //gitRepositoryProccessor.process(repository);
     }
 
     public void cloneRepository(String remoteRepositoryURI, File directoryToSaveTo) {
         try {
             gitService.cloneRepository(remoteRepositoryURI, directoryToSaveTo);
-        } catch (GitAPIException e) {
-            log.error("Error fetching git api exception");
+        } catch (ServiceException e) {
+            log.error("Error fetching repository from URL {}: {}", remoteRepositoryURI, e.getMessage());
         }
     }
+
+    public void pullRepository(File repository) {
+        gitService.pullRepository(repository);
+    }
+
 
 }
