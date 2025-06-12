@@ -16,14 +16,11 @@ import java.util.List;
 @Table(name = "AUTHORS")
 public class Author {
 
-    @Id
-    @GeneratedValue
-    private Long id;
-
     private String firstName;
 
     private String lastName;
 
+    @Id
     @Column(unique = true, nullable = false)
     private String email;
 
