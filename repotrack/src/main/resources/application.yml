@@ -10,7 +10,6 @@ spring:
     hibernate:
       ddl-auto: create-drop
     database: postgresql
-    show-sql: true
 repo:
   fetch:
     cron: ${REPO_FETCH_CRON:0 59 23 * * *}
